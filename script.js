@@ -1,5 +1,6 @@
 const inputSlider = document.querySelector("[data-lengthSlider]");
 const lengthDisplay = document.querySelector("[data-lengthNumber]");
+
 const passwordDisplay = document.querySelector("[data-passwordDisplay]");
 const copyBtn = document.querySelector("[data-copy]");
 const copyMsg = document.querySelector("[data-copyMsg]");
@@ -18,18 +19,23 @@ let password = "";
 let passwordLength = 10;
 let checkCount = 0;
 handleSlider();
-//set strength circle color to grey
+//ste strength circle color to grey
+setIndicator("#ccc");
 
 
 //set passwordLength
-// handleSlider ka kam hai passwordLength ko UI pr display krana
 function handleSlider() {
     inputSlider.value = passwordLength;
     lengthDisplay.innerText = passwordLength;
+    //or kuch bhi karna chahiye ? - HW
+    const min = inputSlider.min;
+    const max = inputSlider.max;
+    inputSlider.style.backgroundSize = ((passwordLength - min)*100/(max - min)) + "% 100%"
 }
 
 function setIndicator(color) {
     indicator.style.backgroundColor = color;
+    indicator.style.boxShadow = `0px 0px 12px 1px ${color}`;
 }
 
 function getRndInteger(min, max) {
@@ -65,15 +71,13 @@ function calcStrength() {
   
     if (hasUpper && hasLower && (hasNum || hasSym) && passwordLength >= 8) {
       setIndicator("#0f0");
-    }
-    else if (
+    } else if (
       (hasLower || hasUpper) &&
       (hasNum || hasSym) &&
       passwordLength >= 6
     ) {
       setIndicator("#ff0");
-    }
-    else {
+    } else {
       setIndicator("#f00");
     }
 }
@@ -98,7 +102,9 @@ async function copyContent() {
 function shufflePassword(array) {
     //Fisher Yates Method
     for (let i = array.length - 1; i > 0; i--) {
+        //random J, find out using random function
         const j = Math.floor(Math.random() * (i + 1));
+        //swap number at i index and j index
         const temp = array[i];
         array[i] = array[j];
         array[j] = temp;
@@ -150,6 +156,7 @@ generateBtn.addEventListener('click', () => {
     }
 
     // let's start the jouney to find new password
+    console.log("Starting the Journey");
     //remove old password
     password = "";
 
@@ -171,8 +178,6 @@ generateBtn.addEventListener('click', () => {
     //     password += generateSymbol();
     // }
 
-
-
     let funcArr = [];
 
     if(uppercaseCheck.checked)
@@ -191,6 +196,7 @@ generateBtn.addEventListener('click', () => {
     for(let i=0; i<funcArr.length; i++) {
         password += funcArr[i]();
     }
+    console.log("COmpulsory adddition done");
 
     //remaining adddition
     for(let i=0; i<passwordLength-funcArr.length; i++) {
@@ -198,12 +204,13 @@ generateBtn.addEventListener('click', () => {
         console.log("randIndex" + randIndex);
         password += funcArr[randIndex]();
     }
+    console.log("Remaining adddition done");
     //shuffle the password
     password = shufflePassword(Array.from(password));
-
+    console.log("Shuffling done");
     //show in UI
     passwordDisplay.value = password;
-
+    console.log("UI adddition done");
     //calculate strength
     calcStrength();
 });
